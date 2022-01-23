@@ -41,7 +41,7 @@
 Google Book Search is every reader's best friend.  Use the power of Google to fill out a "read next" list, with convenient links to previews of book contents for many books!
 
 ## Usage
-To use this application visit it [here](https://caeldeth.github.io/book-search/).
+To use this application visit it [here](https://hidden-earth-31394.herokuapp.com/).
 
 ## Contributing
 This project utilizes the [Contributor Covenant](https://www.contributor-covenant.org/version/2/1/code_of_conduct/).
@@ -54,3 +54,5 @@ If you have any questions on this project:
 Visit my [profile](https://github.com/Caeldeth) to see more great projects!
   
 ## Screenshots
+![Main Page](./images/book-search.png)
+![Booklist](./images/saved-books.png)
