@@ -1,34 +1,45 @@
 import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
+import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
-import { QUERY_ME } from '../utils/queries';
-import { REMOVE_BOOK } from '../utils/mutations';
+
 import { useQuery, useMutation } from '@apollo/client';
+import { QUERY_ME } from '../utils/queries'
+import { REMOVE_BOOK } from '../utils/mutations'
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(QUERY_ME);
-  const [removeBook, {error}] = useMutation(REMOVE_BOOK);
+
+  const { loading, data } = useQuery(QUERY_ME); 
+  const [ removeBook, { error } ] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || [];
 
-
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
+    // check for logged in state
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
+    // if no token, return false
     if (!token) {
       return false;
     }
 
+    // try to delete book from db first then from localStorage
     try {
-      const {data} = await removeBook({
+      await removeBook({
         variables: { bookId }
       });
 
-      removeBookId(bookId)
+      // if it broke, say something vaguely useful
+      if (error) {
+        throw new Error('something went wrong!');
+      }
 
+      // upon success, remove book's id from localStorage
+      removeBookId(bookId);
     } catch (err) {
+      //log any error
       console.error(err);
     }
   };
@@ -38,6 +49,7 @@ const SavedBooks = () => {
     return <h2>LOADING...</h2>;
   }
 
+  // add noreferrer and noopener to link to stop error
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>
@@ -60,6 +72,7 @@ const SavedBooks = () => {
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
+                  <a href={book.link} target="_blank" rel="noopener noreferrer">Google Books Preview</a>
                   <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
                     Delete this Book!
                   </Button>

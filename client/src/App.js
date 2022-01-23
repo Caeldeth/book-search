@@ -22,7 +22,20 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
     link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
+    // define custom merge since books doesn't have default unique id
+    cache: new InMemoryCache({
+        typePolicies: {
+            User: {
+                fields: {
+                    savedBooks: {
+                        merge(existing, incoming) {
+                            return incoming;
+                        },
+                    },
+                },
+            },
+        },
+    }),
 });
 
 function App() {
